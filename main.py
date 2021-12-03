@@ -10,6 +10,9 @@
 import turtle
 
 
+######################################################################################
+
+
 class Instruction:
 
     def set_distance(self, dist_str: str, unit: str):
@@ -92,26 +95,34 @@ class Instruction:
 
 
 def main():
+
+    # Initialize the turtle and the frame
     frame = turtle.Screen()
     artist = turtle.Turtle()
     artist.setheading(90)
 
+    # Read all instructions from the file
     file = open("Easterwood2Coulter.txt", 'r')
     instructions = []
-
     for instruction_string in file.read().split("\n\n"):
         instructions.append(Instruction(instruction_string))
         print()
 
+    # For each instruction, print the instruction and do what it says
     for i in instructions:
         print(i.lines)
+
+        # Turn according to visible data
         if i.cardinal_angle:
             artist.setheading(i.angle)
         else:
             artist.left(i.angle)
+
+        # Move the appropriate distance
         artist.forward(i.dist / 200)
 
-    input()
+    # Wait till a click to close the frame
+    frame.exitonclick()
 
 
 if __name__ == "__main__":
