@@ -28,8 +28,8 @@ class Instruction:
 
     def __init__(self, string: str):
         self.lines: list
-        self.dist: float = 0
-        self.time: float = 0
+        self.dist:  float = 0
+        self.time:  float = 0
         self.angle: int = 0
         self.cardinal_angle: bool = False
 
