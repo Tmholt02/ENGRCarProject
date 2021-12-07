@@ -2,10 +2,12 @@
 #   "Aggies do not lie, cheat, or steal, or tolerate those who do."
 #   "I have not given or received any unauthorized aid on this assignment."
 #
-# Name:         Thomas Holt, Tanner Kotara, Jacob Kimbrough, Austin Wheeler
+# Name:         Thomas Holt, Austin Wheeler, Jacob Kimbrough, Tanner Kotara
 # Section:      464
 # Assignment:   Car Lab
 # Date:         12/07/2021
+
+"""This is the legendary navigation software!"""
 
 import turtle
 import tkinter as tk
@@ -15,21 +17,43 @@ import tkinter as tk
 
 
 class Instruction:
+    """Stores and interprets instructions that appear in
+    formatted input files."""
 
     def set_distance(self, dist_str: str, unit: str):
+        """Reassigns the value of dist to what is in the parameters.
+        if the unit is 'mi', it will be converted to ft
+
+        :param str dist_str: magnitude of the new distance
+        :param str unit: original unit
+        """
+
         self.dist = float(dist_str)
         if unit == "mi":
             self.dist *= 5280
 
     def set_time(self, time_str: str, unit: str):
+        """Reassigns the value of time to what is in the parameters.
+        if the unit is 'min', it will be converted to seconds
+
+        :param time_str: magnitude of the new time
+        :param unit: original unit
+        """
+
         self.time = float(time_str)
         if unit == "min":
             self.time *= 60
 
     def __init__(self, string: str):
+        """Initialize a new Instruction
+
+        :param string: Instructions based on a single
+                       entry from an instruction file
+        """
+
         self.lines: list
-        self.dist:  float = 0
-        self.time:  float = 0
+        self.dist: float = 0
+        self.time: float = 0
         self.angle: int = 0
         self.cardinal_angle: bool = False
 
@@ -91,6 +115,10 @@ class Instruction:
 
 
 class Main:
+    """This class stores data used by the tkinter frame's wigets.
+    It also serves as the starting point of the program
+    """
+
     __root:          tk.Tk
     __canvas:        tk.Canvas
     __screen:        turtle.TurtleScreen
@@ -105,6 +133,11 @@ class Main:
 
     @classmethod
     def main(cls):
+        """Launch the navigation software. This will make a new window
+        and populate it with its widgets to take first input from the user.
+        The __start_button will launch the next section IF the file is found.
+        Otherwise, nothing will happen.
+        """
 
         # Initialize the frame root
         cls.__root = tk.Tk()
@@ -117,14 +150,19 @@ class Main:
         cls.__text.pack(side=tk.LEFT)
 
         # This button will trigger the second part, and will read the text
-        cls.__start_button = tk.Button(cls.__root, text="  Start  ", command=cls.setup)
+        cls.__start_button = tk.Button(cls.__root, text="  Start  ", command=cls.__setup)
         cls.__start_button.pack(side=tk.RIGHT)
 
         # Start the window
         cls.__root.mainloop()
 
     @classmethod
-    def setup(cls):
+    def __setup(cls):
+        """Set up the navigation portion of the program. If the file isn't found,
+        nothing will happen. This populates the __root with new content. The
+        __next_button will display the next navigational step with both a turtle
+        and a helpful message.
+        """
         # Try to open the file. If we cant, its a lie, move on
         file_name = "unread_file"
         try:
@@ -150,7 +188,7 @@ class Main:
         # Next button displays next step using the next method.
         # Keep track of presses
         cls.__press_cnt = 0
-        cls.__next_button = tk.Button(cls.__root, text="  Next  ", command=cls.next)
+        cls.__next_button = tk.Button(cls.__root, text="  Next  ", command=cls.__next)
         cls.__next_button.pack(side=tk.LEFT)
 
         # This will display instructions
@@ -164,7 +202,6 @@ class Main:
         cls.__artist = turtle.RawTurtle(cls.__screen, shape="classic")
 
         # Read all instructions from the file
-        # Easterwood2Coulter.txt
         cls.__instructions = []
         for instruction_string in file.read().split("\n\n"):
             cls.__instructions.append(Instruction(instruction_string))
@@ -176,8 +213,9 @@ class Main:
         cls.__artist.pensize(2)
 
     @classmethod
-    def next(cls):
-
+    def __next(cls):
+        """Display the following instruction for the user to see. Updates the
+        turtle and the label"""
         # Makeshift thread safety. busy is True if this method is in use
         # We also shouldn't execute if we're out of instructions to follow
         if cls.__busy or cls.__press_cnt >= len(cls.__instructions):
